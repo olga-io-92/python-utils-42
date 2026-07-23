@@ -1,30 +1,21 @@
 import json
+from validators import validate_input
 
-def process_data(data):
-    if not isinstance(data, dict):
-        raise ValueError('Input must be a dictionary')
-    return {key: value for key, value in data.items() if value is not None}
+def process_data(input_data):
+    if not validate_input(input_data):
+        raise ValueError('Invalid input data')
+    result = {}  # Process the input data here
+    # Example processing (mock)
+    result['output'] = input_data.upper()  # Simple transformation example
+    return result
 
-
-def read_json(file_path):
-    with open(file_path, 'r') as file:
-        return json.load(file)
-
-
-def write_json(file_path, data):
-    with open(file_path, 'w') as file:
-        json.dump(data, file, indent=4)
-
-
-def main(file_path):
-    data = read_json(file_path)
-    cleaned_data = process_data(data)
-    write_json(file_path, cleaned_data)
-
+def main():
+    data = input('Enter some data: ')
+    try:
+        output = process_data(data)
+        print(json.dumps(output, indent=2))
+    except ValueError as e:
+        print(e)
 
 if __name__ == '__main__':
-    import sys
-    if len(sys.argv) != 2:
-        print('Usage: python processor.py <file_path>')
-        sys.exit(1)
-    main(sys.argv[1])
+    main()

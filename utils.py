@@ -1,26 +1,53 @@
-import re
+from typing import List, Dict, Any
 
-def validate_input(user_input):
-    if not isinstance(user_input, str):
-        raise ValueError('Input must be a string.')
-    if not user_input:
-        raise ValueError('Input cannot be empty.')
-    if not re.match('^[a-zA-Z0-9_]*$', user_input):
-        raise ValueError('Input contains invalid characters. Only alphanumeric and underscores are allowed.')
-    return True
 
-def process_data(data):
-    validate_input(data)
-    # Process the validated input data
-    return f'Processed: {data}'
+def flatten_dict(d: Dict[str, Any], parent_key: str = '', sep: str = '.') -> Dict[str, Any]:
+    """Flatten a nested dictionary.
 
-def main():
-    user_input = input('Enter some input: ')
-    try:
-        result = process_data(user_input)
-        print(result)
-    except ValueError as e:
-        print(f'Error: {e}')
+    Args:
+        d (Dict[str, Any]): The dictionary to flatten.
+        parent_key (str, optional): The base key string.
+        sep (str, optional): Separator to use between keys.
 
-if __name__ == '__main__':
-    main()
+    Returns:
+        Dict[str, Any]: A new flattened dictionary.
+    """
+    items = []
+    for k, v in d.items():
+        new_key = f"{parent_key}{sep}{k}" if parent_key else k
+        if isinstance(v, dict):
+            items.extend(flatten_dict(v, new_key, sep=sep).items())
+        else:
+            items.append((new_key, v))
+    return dict(items)
+
+
+def unique_list(seq: List[Any]) -> List[Any]:
+    """Return a list of unique elements while preserving order.
+
+    Args:
+        seq (List[Any]): The input list from which to get unique elements.
+
+    Returns:
+        List[Any]: A list of unique elements.
+    """
+    seen = set()
+    return [x for x in seq if not (x in seen or seen.add(x))]
+
+
+def deep_merge(a: Dict[str, Any], b: Dict[str, Any]) -> Dict[str, Any]:
+    """Merge two dictionaries deeply.
+
+    Args:
+        a (Dict[str, Any]): The first dictionary.
+        b (Dict[str, Any]): The second dictionary.
+
+    Returns:
+        Dict[str, Any]: A new dictionary containing the merged keys and values.
+    """
+    for k, v in b.items():
+        if isinstance(v, dict) and k in a:
+            a[k] = deep_merge(a[k], v)
+        else:
+            a[k] = v
+    return a

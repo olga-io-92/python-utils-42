@@ -1,53 +1,29 @@
-from typing import List, Dict, Any
-
-
-def flatten_dict(d: Dict[str, Any], parent_key: str = '', sep: str = '.') -> Dict[str, Any]:
-    """Flatten a nested dictionary.
-
-    Args:
-        d (Dict[str, Any]): The dictionary to flatten.
-        parent_key (str, optional): The base key string.
-        sep (str, optional): Separator to use between keys.
-
-    Returns:
-        Dict[str, Any]: A new flattened dictionary.
-    """
-    items = []
-    for k, v in d.items():
-        new_key = f"{parent_key}{sep}{k}" if parent_key else k
-        if isinstance(v, dict):
-            items.extend(flatten_dict(v, new_key, sep=sep).items())
+def flatten(lst):
+    flat_list = []
+    for item in lst:
+        if isinstance(item, list):
+            flat_list.extend(flatten(item))
         else:
-            items.append((new_key, v))
-    return dict(items)
+            flat_list.append(item)
+    return flat_list
 
+def one_hot_encode(labels):
+    unique_labels = set(labels)
+    label_to_index = {label: index for index, label in enumerate(unique_labels)}
+    one_hot = [[0] * len(unique_labels) for _ in labels]
+    for i, label in enumerate(labels):
+        one_hot[i][label_to_index[label]] = 1
+    return one_hot
 
-def unique_list(seq: List[Any]) -> List[Any]:
-    """Return a list of unique elements while preserving order.
+import json
 
-    Args:
-        seq (List[Any]): The input list from which to get unique elements.
+def save_json(data, file_path):
+    with open(file_path, 'w') as json_file:
+        json.dump(data, json_file, indent=4)
 
-    Returns:
-        List[Any]: A list of unique elements.
-    """
-    seen = set()
-    return [x for x in seq if not (x in seen or seen.add(x))]
+def load_json(file_path):
+    with open(file_path, 'r') as json_file:
+        return json.load(json_file)
 
-
-def deep_merge(a: Dict[str, Any], b: Dict[str, Any]) -> Dict[str, Any]:
-    """Merge two dictionaries deeply.
-
-    Args:
-        a (Dict[str, Any]): The first dictionary.
-        b (Dict[str, Any]): The second dictionary.
-
-    Returns:
-        Dict[str, Any]: A new dictionary containing the merged keys and values.
-    """
-    for k, v in b.items():
-        if isinstance(v, dict) and k in a:
-            a[k] = deep_merge(a[k], v)
-        else:
-            a[k] = v
-    return a
+def generate_range(start, end, step=1):
+    return list(range(start, end, step))

@@ -1,35 +1,19 @@
-def is_palindrome(string):
-    return string == string[::-1]
+import time
+import requests
 
+class NetworkError(Exception):
+    pass
 
-def factorial(n):
-    if n < 0:
-        raise ValueError('Negative values are not allowed.')
-    if n == 0:
-        return 1
-    result = 1
-    for i in range(2, n + 1):
-        result *= i
-    return result
-
-
-def fibonacci(n):
-    if n < 0:
-        raise ValueError('Negative values are not allowed.')
-    sequence = [0, 1]
-    for i in range(2, n):
-        next_value = sequence[i - 1] + sequence[i - 2]
-        sequence.append(next_value)
-    return sequence[:n]
-
-
-def flatten(nested_list):
-    flattened = []
-    for sublist in nested_list:
-        for item in sublist:
-            flattened.append(item)
-    return flattened
-
-
-def merge_dicts(dict1, dict2):
-    return {**dict1, **dict2}
+def retry_request(url, retries=3, delay=2, backoff=2):
+    attempt = 0
+    while attempt < retries:
+        try:
+            response = requests.get(url)
+            response.raise_for_status()
+            return response
+        except requests.RequestException:
+            attempt += 1
+            if attempt == retries:
+                raise NetworkError(f'Failed to fetch {url} after {retries} attempts')
+            time.sleep(delay)
+            delay *= backoff

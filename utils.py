@@ -1,29 +1,29 @@
-def flatten(lst):
-    flat_list = []
-    for item in lst:
-        if isinstance(item, list):
-            flat_list.extend(flatten(item))
-        else:
-            flat_list.append(item)
-    return flat_list
+import time
+import functools
+import requests
 
-def one_hot_encode(labels):
-    unique_labels = set(labels)
-    label_to_index = {label: index for index, label in enumerate(unique_labels)}
-    one_hot = [[0] * len(unique_labels) for _ in labels]
-    for i, label in enumerate(labels):
-        one_hot[i][label_to_index[label]] = 1
-    return one_hot
+class RetryExceededError(Exception):
+    pass
 
-import json
+def retry(max_retries=3, delay=1, backoff=2):
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            retries = 0
+            while retries < max_retries:
+                try:
+                    return func(*args, **kwargs)
+                except requests.RequestException:
+                    retries += 1
+                    if retries == max_retries:
+                        raise RetryExceededError(f'Max retries exceeded for {func.__name__}')
+                    time.sleep(delay)
+                    delay *= backoff
+        return wrapper
+    return decorator
 
-def save_json(data, file_path):
-    with open(file_path, 'w') as json_file:
-        json.dump(data, json_file, indent=4)
-
-def load_json(file_path):
-    with open(file_path, 'r') as json_file:
-        return json.load(json_file)
-
-def generate_range(start, end, step=1):
-    return list(range(start, end, step))
+@retry(max_retries=5, delay=2)
+def fetch_data(url):
+    response = requests.get(url)
+    response.raise_for_status()
+    return response.json()

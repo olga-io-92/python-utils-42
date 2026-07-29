@@ -1,19 +1,21 @@
-import time
-import requests
+def optimized_function(data):
+    result = []
+    data_set = set(data)
+    for item in data_set:
+        result.append(item * 2)
+    return result
 
-class NetworkError(Exception):
-    pass
+def read_large_file(file_path):
+    with open(file_path, 'r') as file:
+        chunk_size = 1024
+        while True:
+            chunk = file.read(chunk_size)
+            if not chunk:
+                break
+            yield chunk
 
-def retry_request(url, retries=3, delay=2, backoff=2):
-    attempt = 0
-    while attempt < retries:
-        try:
-            response = requests.get(url)
-            response.raise_for_status()
-            return response
-        except requests.RequestException:
-            attempt += 1
-            if attempt == retries:
-                raise NetworkError(f'Failed to fetch {url} after {retries} attempts')
-            time.sleep(delay)
-            delay *= backoff
+def process_file(file_path):
+    data = ''
+    for chunk in read_large_file(file_path):
+        data += chunk
+    return optimized_function(data.split())

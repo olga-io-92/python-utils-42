@@ -1,16 +1,16 @@
 import re
 
-def is_valid_email(email):
-    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+def is_valid_email(email: str) -> bool:
+    pattern = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
     return re.match(pattern, email) is not None
 
-def is_strong_password(password):
-    if len(password) < 8:
-        return False
-    if not re.search(r'[A-Z]', password):
-        return False
-    if not re.search(r'[a-z]', password):
-        return False
-    if not re.search(r'[0-9]', password):
-        return False
-    if not re.search(r'[!?@#$%^&*(),.:
+def is_valid_phone(phone: str) -> bool:
+    pattern = r'^\+?[1-9]\d{1,14}$'
+    return re.match(pattern, phone) is not None
+
+def is_non_empty_string(value: str) -> bool:
+    return bool(value.strip())
+
+def is_valid_username(username: str) -> bool:
+    pattern = r'^[a-zA-Z0-9_]{3,20}$'
+    return re.match(pattern, username) is not None

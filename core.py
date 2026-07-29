@@ -1,31 +1,32 @@
-import time
-import functools
+import json
 
+class CustomError(Exception):
+    pass
 
-def performance_timer(func):
-    @functools.wraps(func)
-    def wrapper(*args, **kwargs):
-        start_time = time.time()
-        result = func(*args, **kwargs)
-        end_time = time.time()
-        print(f'Performance: {func.__name__} executed in {end_time - start_time:.4f}s')
-        return result
-    return wrapper
+class DataProcessor:
+    def __init__(self, data):
+        if not isinstance(data, list):
+            raise CustomError('Data should be a list.')
+        self.data = data
 
+    def process(self):
+        try:
+            return [self._process_item(item) for item in self.data]
+        except Exception as e:
+            raise CustomError(f'Processing error: {str(e)}')
 
-@performance_timer
-def heavy_computation(n):
-    total = 0
-    for i in range(n):
-        total += i ** 2
-    return total
-
-
-@performance_timer
-def data_processing(data):
-    return [item * 2 for item in data]
-
+    def _process_item(self, item):
+        if not isinstance(item, dict):
+            raise CustomError('Each item must be a dictionary.')
+        if 'value' not in item:
+            raise CustomError('Missing key: value')
+        return item['value'] * 2
 
 if __name__ == '__main__':
-    print(heavy_computation(100000))
-    print(data_processing([1, 2, 3, 4, 5]))
+    try:
+        data = json.loads('[{"value": 1}, {"value": 2}, {"value": 3}]')
+        processor = DataProcessor(data)
+        processed_data = processor.process()
+        print(processed_data)
+    except CustomError as e:
+        print(f'Error: {e}')

@@ -1,22 +1,24 @@
-class CustomError(Exception):
+class CustomException(Exception):
     pass
 
-class ValidationError(CustomError):
+class ValidationException(CustomException):
+    def __init__(self, message, errors=None):
+        super().__init__(message)
+        self.errors = errors
+
+class NotFoundException(CustomException):
+    pass
+
+class PermissionException(CustomException):
     def __init__(self, message):
         super().__init__(message)
 
-class NotFoundError(CustomError):
-    def __init__(self, message):
-        super().__init__(message)
+class DatabaseException(CustomException):
+    pass
 
-class PermissionError(CustomError):
-    def __init__(self, message):
-        super().__init__(message)
+class NetworkException(CustomException):
+    pass
 
-class DatabaseError(CustomError):
-    def __init__(self, message):
-        super().__init__(message)
-
-class ConfigurationError(CustomError):
-    def __init__(self, message):
-        super().__init__(message)
+class ResourceConflictException(CustomException):
+    def __init__(self, resource):
+        super().__init__(f'Resource conflict with {resource}')

@@ -1,18 +1,25 @@
-def validate_email(email: str) -> bool:
-    import re
-    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-    return re.match(pattern, email) is not None
+import re
+
+def validate_email(email):
+    email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+    return re.match(email_regex, email) is not None
 
 
-def validate_phone(phone: str) -> bool:
-    pattern = r'^\+?1?\d{9,15}$'
-    return re.match(pattern, phone) is not None
+def validate_phone(phone):
+    phone_regex = r'^\+?1?\d{9,15}$'
+    return re.match(phone_regex, phone) is not None
 
 
-def validate_username(username: str) -> bool:
-    pattern = r'^[a-zA-Z][a-zA-Z0-9_]{4,29}$'
-    return re.match(pattern, username) is not None
+def validate_url(url):
+    url_regex = r'^(https?://)?(www\.)?[-a-zA-Z0-9@:%_\+.~#?&//=]+\.[a-zA-Z]{2,}(/\S*)?$'
+    return re.match(url_regex, url) is not None
 
 
-def validate_password(password: str) -> bool:
-    return len(password) >= 8 and any(c.isdigit() for c in password) and any(c.isalpha() for c in password)
+def validate_required_fields(data, required_fields):
+    return all(field in data and data[field] for field in required_fields
+
+
+if __name__ == '__main__':
+    print(validate_email('test@example.com'))  # True
+    print(validate_phone('+1234567890'))      # True
+    print(validate_url('http://example.com'))  # True

@@ -1,23 +1,20 @@
 import json
-import os
+from pathlib import Path
 
 class ConfigLoader:
-    def __init__(self, default_config):
-        self.default_config = default_config
-        self.config = default_config.copy()
+    def __init__(self, default_config=None):
+        self.default_config = default_config or {}
+        self.config = self.default_config.copy()
 
     def load(self, filepath):
-        if os.path.exists(filepath):
+        if Path(filepath).is_file():
             with open(filepath, 'r') as file:
                 user_config = json.load(file)
                 self.config.update(user_config)
-        return self.config
 
     def get(self, key, default=None):
         return self.config.get(key, default)
 
-if __name__ == '__main__':
-    defaults = {'host': 'localhost', 'port': 8080}
-    config_loader = ConfigLoader(defaults)
-    loaded_config = config_loader.load('config.json')
-    print(loaded_config)
+    def save(self, filepath):
+        with open(filepath, 'w') as file:
+            json.dump(self.config, file, indent=4)

@@ -1,68 +1,20 @@
-from typing import Any, Dict, List, Union
+import re
+
+def is_valid_email(email):
+    pattern = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+    return re.match(pattern, email) is not None
+
+def is_strong_password(password):
+    pattern = r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$'
+    return re.match(pattern, password) is not None
+
+def is_positive_integer(value):
+    if isinstance(value, int):
+        return value > 0
+    return False
 
 
-def validate_string(value: Any) -> bool:
-    """
-    Validates if the input is a non-empty string.
+def is_valid_username(username):
+    pattern = r'^[a-zA-Z0-9_]{3,20}$'
+    return re.match(pattern, username) is not None
 
-    Args:
-        value (Any): The value to be checked.
-
-    Returns:
-        bool: True if value is a non-empty string, False otherwise.
-    """
-    return isinstance(value, str) and bool(value)
-
-
-def validate_integer(value: Any) -> bool:
-    """
-    Validates if the input is an integer.
-
-    Args:
-        value (Any): The value to be checked.
-
-    Returns:
-        bool: True if value is an integer, False otherwise.
-    """
-    return isinstance(value, int)
-
-
-def validate_list_of_strings(value: Any) -> bool:
-    """
-    Validates if the input is a list of non-empty strings.
-
-    Args:
-        value (Any): The value to be checked.
-
-    Returns:
-        bool: True if value is a list of non-empty strings, False otherwise.
-    """
-    return isinstance(value, list) and all(validate_string(item) for item in value)
-
-
-def validate_dict(value: Any) -> bool:
-    """
-    Validates if the input is a dictionary.
-
-    Args:
-        value (Any): The value to be checked.
-
-    Returns:
-        bool: True if value is a dictionary, False otherwise.
-    """
-    return isinstance(value, dict)
-
-
-def validate_date_format(value: str) -> bool:
-    """
-    Validates if the input string matches the format 'YYYY-MM-DD'.
-
-    Args:
-        value (str): The date string to be checked.
-
-    Returns:
-        bool: True if the value matches the date format, False otherwise.
-    """
-    import re
-    date_pattern = re.compile(r'^(\d{4})-(\d{2})-(\d{2})$')
-    return bool(date_pattern.match(value))

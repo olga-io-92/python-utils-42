@@ -1,58 +1,31 @@
-from typing import Any, Dict
+import os
+import json
+
+def read_json(file_path):
+    with open(file_path, 'r') as f:
+        return json.load(f)
 
 
-def flatten_dict(nested_dict: Dict[str, Any], parent_key: str = '', sep: str = '.') -> Dict[str, Any]:
-    """
-    Flattens a nested dictionary.
-
-    Args:
-        nested_dict (Dict[str, Any]): The dictionary to flatten.
-        parent_key (str): The base key string for the keys in the flattened dictionary.
-        sep (str): The separator to use for concatenated keys.
-
-    Returns:
-        Dict[str, Any]: A flattened dictionary.
-    """
-    items = []
-    for k, v in nested_dict.items():
-        new_key = f'{parent_key}{sep}{k}' if parent_key else k
-        if isinstance(v, dict):
-            items.extend(flatten_dict(v, new_key, sep=sep).items())
-        else:
-            items.append((new_key, v))
-    return dict(items)
+def write_json(file_path, data):
+    with open(file_path, 'w') as f:
+        json.dump(data, f, indent=4)
 
 
-def deep_update(original: Dict[str, Any], updates: Dict[str, Any]) -> Dict[str, Any]:
-    """
-    Recursively updates a dictionary with values from another dictionary.
-
-    Args:
-        original (Dict[str, Any]): The original dictionary to update.
-        updates (Dict[str, Any]): The dictionary with updates.
-
-    Returns:
-        Dict[str, Any]: The updated dictionary.
-    """
-    for k, v in updates.items():
-        if isinstance(v, dict) and k in original:
-            original[k] = deep_update(original[k], v)
-        else:
-            original[k] = v
-    return original
+def list_files(directory):
+    return [f for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))]
 
 
-def merge_dicts(dict1: Dict[str, Any], dict2: Dict[str, Any]) -> Dict[str, Any]:
-    """
-    Merges two dictionaries into one.
+def create_directory(directory):
+    if not os.path.exists(directory):
+        os.makedirs(directory)
 
-    Args:
-        dict1 (Dict[str, Any]): The first dictionary.
-        dict2 (Dict[str, Any]): The second dictionary.
 
-    Returns:
-        Dict[str, Any]: The merged dictionary.
-    """
-    merged = dict(dict1)  # Copy dict1 to avoid modifying it
-    merged.update(dict2)  # Update with dict2
-    return merged
+def safe_delete(file_path):
+    if os.path.exists(file_path):
+        os.remove(file_path)  
+
+
+def merge_dicts(dict1, dict2):
+    result = dict1.copy()
+    result.update(dict2)
+    return result

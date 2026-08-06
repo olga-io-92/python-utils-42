@@ -1,23 +1,68 @@
-class InputValidationError(Exception):
-    pass
+from typing import Any, Dict, List, Union
 
-def validate_input(data):
-    if not isinstance(data, (int, float)):
-        raise InputValidationError('Input must be a number.')
-    if data < 0:
-        raise InputValidationError('Input must be non-negative.')
 
-class Processor:
-    def process(self, input_data):
-        try:
-            validate_input(input_data)
-            result = input_data ** 2  # Sample processing
-            return result
-        except InputValidationError as e:
-            return str(e)
+def validate_string(value: Any) -> bool:
+    """
+    Validates if the input is a non-empty string.
 
-if __name__ == '__main__':
-    processor = Processor()
-    for value in [10, -5, 'a', 3.5]:
-        output = processor.process(value)
-        print(f'Input: {value}, Output: {output}')
+    Args:
+        value (Any): The value to be checked.
+
+    Returns:
+        bool: True if value is a non-empty string, False otherwise.
+    """
+    return isinstance(value, str) and bool(value)
+
+
+def validate_integer(value: Any) -> bool:
+    """
+    Validates if the input is an integer.
+
+    Args:
+        value (Any): The value to be checked.
+
+    Returns:
+        bool: True if value is an integer, False otherwise.
+    """
+    return isinstance(value, int)
+
+
+def validate_list_of_strings(value: Any) -> bool:
+    """
+    Validates if the input is a list of non-empty strings.
+
+    Args:
+        value (Any): The value to be checked.
+
+    Returns:
+        bool: True if value is a list of non-empty strings, False otherwise.
+    """
+    return isinstance(value, list) and all(validate_string(item) for item in value)
+
+
+def validate_dict(value: Any) -> bool:
+    """
+    Validates if the input is a dictionary.
+
+    Args:
+        value (Any): The value to be checked.
+
+    Returns:
+        bool: True if value is a dictionary, False otherwise.
+    """
+    return isinstance(value, dict)
+
+
+def validate_date_format(value: str) -> bool:
+    """
+    Validates if the input string matches the format 'YYYY-MM-DD'.
+
+    Args:
+        value (str): The date string to be checked.
+
+    Returns:
+        bool: True if the value matches the date format, False otherwise.
+    """
+    import re
+    date_pattern = re.compile(r'^(\d{4})-(\d{2})-(\d{2})$')
+    return bool(date_pattern.match(value))

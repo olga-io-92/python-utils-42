@@ -1,20 +1,26 @@
 import json
-from pathlib import Path
+import os
 
-class ConfigLoader:
-    def __init__(self, default_config=None):
-        self.default_config = default_config or {}
-        self.config = self.default_config.copy()
+def load_config(file_path):
+    if not isinstance(file_path, str):
+        raise ValueError('File path must be a string')
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(f'Config file not found: {file_path}')
+    try:
+        with open(file_path, 'r') as file:
+            config = json.load(file)
+    except json.JSONDecodeError:
+        raise ValueError('Invalid JSON format')
+    return config
 
-    def load(self, filepath):
-        if Path(filepath).is_file():
-            with open(filepath, 'r') as file:
-                user_config = json.load(file)
-                self.config.update(user_config)
 
-    def get(self, key, default=None):
-        return self.config.get(key, default)
-
-    def save(self, filepath):
-        with open(filepath, 'w') as file:
-            json.dump(self.config, file, indent=4)
+def save_config(file_path, data):
+    if not isinstance(file_path, str):
+        raise ValueError('File path must be a string')
+    if not isinstance(data, dict):
+        raise ValueError('Data must be a dictionary')
+    try:
+        with open(file_path, 'w') as file:
+            json.dump(data, file, indent=4)
+    except IOError as e:
+        raise Exception(f'An error occurred while writing to the file: {e}')

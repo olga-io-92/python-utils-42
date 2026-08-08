@@ -1,8 +1,25 @@
-import json
+import time
+import requests
 
-class InputValidationError(Exception):
+class NetworkError(Exception):
     pass
 
-def process_input(user_input):
-    if not isinstance(user_input, str) or not user_input:
-        raise InputValidationError('Input must be a non-empty string.')
+def retry_on_failure(retries=3, delay=2):
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            for attempt in range(retries):
+                try:
+                    return func(*args, **kwargs)
+                except requests.RequestException:
+                    if attempt < retries - 1:
+                        time.sleep(delay)
+                    else:
+                        raise NetworkError('Max retries exceeded')
+        return wrapper
+    return decorator
+
+@retry_on_failure(retries=5, delay=3)
+def fetch_data(url):
+    response = requests.get(url)
+    response.raise_for_status()
+    return response.json()

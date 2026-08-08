@@ -1,24 +1,22 @@
-class CustomException(Exception):
-    pass
-
-class ValidationException(CustomException):
-    def __init__(self, message, errors=None):
+class ValidationError(Exception):
+    def __init__(self, message: str):
         super().__init__(message)
-        self.errors = errors
+        self.message = message
 
-class NotFoundException(CustomException):
-    pass
-
-class PermissionException(CustomException):
-    def __init__(self, message):
+class NotFoundError(Exception):
+    def __init__(self, resource: str):
+        message = f'{resource} not found'
         super().__init__(message)
+        self.resource = resource
 
-class DatabaseException(CustomException):
-    pass
+class PermissionDeniedError(Exception):
+    def __init__(self, action: str):
+        message = f'Permission denied for {action}'
+        super().__init__(message)
+        self.action = action
 
-class NetworkException(CustomException):
-    pass
-
-class ResourceConflictException(CustomException):
-    def __init__(self, resource):
-        super().__init__(f'Resource conflict with {resource}')
+class DatabaseError(Exception):
+    def __init__(self, db_message: str):
+        message = f'Database error: {db_message}'
+        super().__init__(message)
+        self.db_message = db_message

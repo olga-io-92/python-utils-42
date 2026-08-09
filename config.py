@@ -1,26 +1,21 @@
 import json
 import os
 
-def load_config(file_path):
-    if not isinstance(file_path, str):
-        raise ValueError('File path must be a string')
-    if not os.path.exists(file_path):
-        raise FileNotFoundError(f'Config file not found: {file_path}')
-    try:
-        with open(file_path, 'r') as file:
-            config = json.load(file)
-    except json.JSONDecodeError:
-        raise ValueError('Invalid JSON format')
-    return config
+class ConfigLoader:
+    def __init__(self, default_config_path):
+        self.default_config_path = default_config_path
+        self.config = self.load_defaults()
 
+    def load_defaults(self):
+        with open(self.default_config_path, 'r') as file:
+            return json.load(file)
 
-def save_config(file_path, data):
-    if not isinstance(file_path, str):
-        raise ValueError('File path must be a string')
-    if not isinstance(data, dict):
-        raise ValueError('Data must be a dictionary')
-    try:
-        with open(file_path, 'w') as file:
-            json.dump(data, file, indent=4)
-    except IOError as e:
-        raise Exception(f'An error occurred while writing to the file: {e}')
+    def update(self, updates):
+        self.config.update(updates)
+
+    def get(self, key, default=None):
+        return self.config.get(key, default)
+
+if __name__ == '__main__':
+    loader = ConfigLoader('default_config.json')
+    print(loader.get('some_key', 'default_value'))

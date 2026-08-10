@@ -1,20 +1,30 @@
 import json
-from typing import Any, Dict, List, Union
 
-def normalize_data(data: Union[Dict[str, Any], List[Any]]) -> Dict[str, Any]:
-    if isinstance(data, list):
-        return {str(i): item for i, item in enumerate(data)}
-    elif isinstance(data, dict):
-        return {key: value for key, value in data.items()}
-    return {}
+class InputError(Exception):
+    pass
 
+def validate_input(data):
+    if not isinstance(data, dict):
+        raise InputError('Input must be a dictionary')
+    if 'name' not in data or not isinstance(data['name'], str):
+        raise InputError('Missing or invalid name')
+    if 'value' not in data or not isinstance(data['value'], (int, float)):
+        raise InputError('Missing or invalid value')
 
-def save_to_json(data: Union[Dict[str, Any], List[Any]], filename: str) -> None:
-    normalized_data = normalize_data(data)
-    with open(filename, 'w') as f:
-        json.dump(normalized_data, f, ensure_ascii=False, indent=4)
+def process_data(data):
+    validate_input(data)
+    result = data['value'] * 2  # Example processingeturn result
 
+def main(input_json):
+    try:
+        data = json.loads(input_json)
+        result = process_data(data)
+        return json.dumps({'result': result})
+    except InputError as e:
+        return json.dumps({'error': str(e)})
+    except json.JSONDecodeError:
+        return json.dumps({'error': 'Invalid JSON'})
 
-def load_from_json(filename: str) -> Union[Dict[str, Any], List[Any]]:
-    with open(filename, 'r') as f:
-        return json.load(f)
+if __name__ == '__main__':
+    sample_input = '{"name": "example", "value": 10}'
+    print(main(sample_input))

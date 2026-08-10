@@ -1,20 +1,20 @@
 import re
 
-def is_valid_email(email):
-    pattern = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
-    return re.match(pattern, email) is not None
-
-def is_strong_password(password):
-    pattern = r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$'
-    return re.match(pattern, password) is not None
-
-def is_positive_integer(value):
-    if isinstance(value, int):
-        return value > 0
-    return False
+def validate_email(email):
+    email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    return re.match(email_regex, email) is not None
 
 
-def is_valid_username(username):
-    pattern = r'^[a-zA-Z0-9_]{3,20}$'
-    return re.match(pattern, username) is not None
+def validate_phone(phone):
+    phone_regex = r'^(\+?\d{1,3}[- ]?)?\(?\d{1,4}\)?[- ]?\d{1,4}[- ]?\d{1,9}$'
+    return re.match(phone_regex, phone) is not None
 
+
+def validate_url(url):
+    url_regex = r'^(https?://)?(www\.)?([a-zA-Z0-9.-]+)\.([a-zA-Z]{2,6})([/\w .-]*)*/?$'
+    return re.match(url_regex, url) is not None
+
+
+def validate_postal_code(postal_code):
+    postal_code_regex = r'^[A-Za-z]\d[A-Za-z] ?\d[A-Za-z]\d$'
+    return re.match(postal_code_regex, postal_code) is not None

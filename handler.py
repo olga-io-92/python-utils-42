@@ -1,23 +1,20 @@
-import time
-import requests
-from requests.exceptions import RequestException
+import json
+from typing import Any, Dict, List, Union
 
-def retry_request(url, retries=3, delay=2):
-    for attempt in range(retries):
-        try:
-            response = requests.get(url)
-            response.raise_for_status()
-            return response.json()
-        except RequestException:
-            if attempt < retries - 1:
-                time.sleep(delay)
-                continue
-            raise
+def normalize_data(data: Union[Dict[str, Any], List[Any]]) -> Dict[str, Any]:
+    if isinstance(data, list):
+        return {str(i): item for i, item in enumerate(data)}
+    elif isinstance(data, dict):
+        return {key: value for key, value in data.items()}
+    return {}
 
-if __name__ == '__main__':
-    url = 'https://api.example.com/data'
-    try:
-        data = retry_request(url)
-        print(data)
-    except Exception as e:
-        print(f'Request failed: {e}')
+
+def save_to_json(data: Union[Dict[str, Any], List[Any]], filename: str) -> None:
+    normalized_data = normalize_data(data)
+    with open(filename, 'w') as f:
+        json.dump(normalized_data, f, ensure_ascii=False, indent=4)
+
+
+def load_from_json(filename: str) -> Union[Dict[str, Any], List[Any]]:
+    with open(filename, 'r') as f:
+        return json.load(f)

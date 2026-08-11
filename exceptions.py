@@ -1,22 +1,22 @@
-class ValidationError(Exception):
-    def __init__(self, message: str):
-        super().__init__(message)
-        self.message = message
+class DataError(Exception):
+    pass
 
-class NotFoundError(Exception):
-    def __init__(self, resource: str):
-        message = f'{resource} not found'
-        super().__init__(message)
-        self.resource = resource
+class NotFoundError(DataError):
+    def __init__(self, message):
+        super().__init__(f'Not Found: {message}')
 
-class PermissionDeniedError(Exception):
-    def __init__(self, action: str):
-        message = f'Permission denied for {action}'
-        super().__init__(message)
-        self.action = action
+class ValidationError(DataError):
+    def __init__(self, message):
+        super().__init__(f'Validation Error: {message}')
 
-class DatabaseError(Exception):
-    def __init__(self, db_message: str):
-        message = f'Database error: {db_message}'
-        super().__init__(message)
-        self.db_message = db_message
+class DatabaseError(DataError):
+    def __init__(self, message):
+        super().__init__(f'Database Error: {message}')
+
+class NetworkError(DataError):
+    def __init__(self, message):
+        super().__init__(f'Network Error: {message}')
+
+class TimeoutError(DataError):
+    def __init__(self, message):
+        super().__init__(f'Timeout Error: {message}')

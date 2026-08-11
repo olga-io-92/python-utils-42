@@ -1,30 +1,24 @@
-import json
+class Handler:
+    def __init__(self, data):
+        self.data = data
 
-class InputError(Exception):
-    pass
+    def process(self):
+        try:
+            result = self.validate(self.data)
+            return self.transform(result)
+        except ValueError as e:
+            return {'error': str(e)}
+        except TypeError:
+            return {'error': 'Invalid type of input'}
+        except Exception as e:
+            return {'error': 'An unexpected error occurred: ' + str(e)}
 
-def validate_input(data):
-    if not isinstance(data, dict):
-        raise InputError('Input must be a dictionary')
-    if 'name' not in data or not isinstance(data['name'], str):
-        raise InputError('Missing or invalid name')
-    if 'value' not in data or not isinstance(data['value'], (int, float)):
-        raise InputError('Missing or invalid value')
+    def validate(self, data):
+        if not isinstance(data, dict):
+            raise ValueError('Input must be a dictionary')
+        if 'key' not in data:
+            raise ValueError('Missing key in input data')
+        return data
 
-def process_data(data):
-    validate_input(data)
-    result = data['value'] * 2  # Example processingeturn result
-
-def main(input_json):
-    try:
-        data = json.loads(input_json)
-        result = process_data(data)
-        return json.dumps({'result': result})
-    except InputError as e:
-        return json.dumps({'error': str(e)})
-    except json.JSONDecodeError:
-        return json.dumps({'error': 'Invalid JSON'})
-
-if __name__ == '__main__':
-    sample_input = '{"name": "example", "value": 10}'
-    print(main(sample_input))
+    def transform(self, data):
+        return {k: v.upper() for k, v in data.items()}

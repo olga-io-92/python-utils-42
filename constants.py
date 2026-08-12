@@ -1,14 +1,27 @@
-import os
+from typing import Final
 
-class Constants:
-    BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-    LOGGING_LEVEL = 'DEBUG'
-    MAX_RETRIES = 5
-    TIMEOUT = 30
-    API_URL = 'https://api.example.com'
-    RESPONSE_FORMAT = 'json'
-    FILE_EXTENSIONS = ['.txt', '.csv', '.json']
-    BUFFER_SIZE = 4096
-    ENCODING = 'utf-8'
+# Constants used throughout the application
 
-constants = Constants()
+PI: Final[float] = 3.14159
+EULER: Final[float] = 2.71828
+
+STATUS_ACTIVE: Final[str] = 'active'
+STATUS_INACTIVE: Final[str] = 'inactive'
+STATUS_PENDING: Final[str] = 'pending'
+
+MAX_RETRIES: Final[int] = 5
+TIMEOUT: Final[int] = 30
+
+# HTTP status codes
+HTTP_OK: Final[int] = 200
+HTTP_NOT_FOUND: Final[int] = 404
+HTTP_SERVER_ERROR: Final[int] = 500
+
+# File paths
+LOG_FILE_PATH: Final[str] = '/var/log/app.log'
+DATA_FILE_PATH: Final[str] = '/data/input.json'
+
+# Define user roles
+ROLE_ADMIN: Final[str] = 'admin'
+ROLE_USER: Final[str] = 'user'
+ROLE_GUEST: Final[str] = 'guest'

@@ -1,24 +1,31 @@
-class Handler:
-    def __init__(self, data):
-        self.data = data
+import json
+import logging
 
-    def process(self):
-        try:
-            result = self.validate(self.data)
-            return self.transform(result)
-        except ValueError as e:
-            return {'error': str(e)}
-        except TypeError:
-            return {'error': 'Invalid type of input'}
-        except Exception as e:
-            return {'error': 'An unexpected error occurred: ' + str(e)}
+class CustomError(Exception):
+    pass
 
-    def validate(self, data):
-        if not isinstance(data, dict):
-            raise ValueError('Input must be a dictionary')
-        if 'key' not in data:
-            raise ValueError('Missing key in input data')
-        return data
 
-    def transform(self, data):
-        return {k: v.upper() for k, v in data.items()}
+def handle_request(data):
+    if not isinstance(data, dict):
+        raise CustomError('Invalid data format')
+    try:
+        response = process_data(data)
+    except KeyError as e:
+        raise CustomError(f'Missing key: {e}')
+    except Exception as e:
+        logging.error(f'Unhandled exception: {e}')
+        raise CustomError('An unexpected error occurred')
+    return response
+
+
+def process_data(data):
+    # Simulating data processing
+    return json.dumps(data)
+
+if __name__ == '__main__':
+    sample_data = {'key': 'value'}  # Example data
+    try:
+        result = handle_request(sample_data)
+        print(result)
+    except CustomError as error:
+        print(f'Error: {error}')

@@ -1,43 +1,38 @@
-from typing import List, Any
-
-def flatten_list(nested_list: List[List[Any]]) -> List[Any]:
-    """
-    Flattens a nested list into a single list.
-
-    Args:
-        nested_list (List[List[Any]]): A list of lists to flatten.
-
-    Returns:
-        List[Any]: A single list containing all elements of the nested lists.
-    """
-    return [item for sublist in nested_list for item in sublist]
+def clean_string(s):
+    return ' '.join(s.split()).strip()
 
 
-def chunk_list(data: List[Any], chunk_size: int) -> List[List[Any]]:
-    """
-    Splits a list into chunks of a specified size.
-
-    Args:
-        data (List[Any]): The list to split into chunks.
-        chunk_size (int): The size of each chunk.
-
-    Returns:
-        List[List[Any]]: A list of lists, each containing a chunk of the original list.
-    """
-    return [data[i:i + chunk_size] for i in range(0, len(data), chunk_size)]
+def is_empty(s):
+    return not bool(s.strip())
 
 
-def merge_dicts(dict1: dict, dict2: dict) -> dict:
-    """
-    Merges two dictionaries into one.
+def to_lowercase(s):
+    return s.lower() if s else ''
 
-    Args:
-        dict1 (dict): The first dictionary.
-        dict2 (dict): The second dictionary.
 
-    Returns:
-        dict: A dictionary containing keys and values from both dictionaries.
-    """
-    merged = dict1.copy()
-    merged.update(dict2)
-    return merged
+def extract_numbers(s):
+    return [int(num) for num in s.split() if num.isdigit()]
+
+
+def flatten_list(lst):
+    return [item for sublist in lst for item in sublist]
+
+
+def generate_range(start, end):
+    return list(range(start, end + 1))
+
+
+def sort_dict_by_key(d):
+    return dict(sorted(d.items()))
+
+
+def reverse_string(s):
+    return s[::-1]
+
+
+def list_to_string(lst, separator=', '):
+    return separator.join(lst)
+
+
+def remove_duplicates(lst):
+    return list(set(lst))

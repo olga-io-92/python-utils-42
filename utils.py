@@ -1,31 +1,41 @@
 import json
 
-def load_json(file_path):
-    with open(file_path, 'r') as file:
-        return json.load(file)
+class CustomError(Exception):
+    pass
 
+def safe_load_json(file_path):
+    try:
+        with open(file_path, 'r') as file:
+            return json.load(file)
+    except FileNotFoundError:
+        raise CustomError(f'File not found: {file_path}')
+    except json.JSONDecodeError:
+        raise CustomError('Invalid JSON format')
+    except Exception as e:
+        raise CustomError(f'Unexpected error: {str(e)}')
 
-def save_json(data, file_path):
-    with open(file_path, 'w') as file:
-        json.dump(data, file, indent=4)
+def divide_numbers(numerator, denominator):
+    try:
+        return numerator / denominator
+    except ZeroDivisionError:
+        raise CustomError('Cannot divide by zero')
+    except TypeError:
+        raise CustomError('Both numerator and denominator must be numbers')
+    except Exception as e:
+        raise CustomError(f'Unexpected error: {str(e)}')
 
+def read_and_process_json(file_path):
+    data = safe_load_json(file_path)
+    return data
 
-def merge_dicts(dict1, dict2):
-    result = dict1.copy()
-    result.update(dict2)
-    return result
+def main():
+    file_path = 'data.json'
+    try:
+        data = read_and_process_json(file_path)
+        result = divide_numbers(data['value'], data['divisor'])
+        print(result)
+    except CustomError as e:
+        print(e)
 
-
-def flatten_dict(nested_dict, parent_key='', sep='_'):
-    items = []
-    for key, value in nested_dict.items():
-        new_key = f'{parent_key}{sep}{key}' if parent_key else key
-        if isinstance(value, dict):
-            items.extend(flatten_dict(value, new_key, sep=sep).items())
-        else:
-            items.append((new_key, value))
-    return dict(items)
-
-
-def extract_keys(data, keys):
-    return {key: data[key] for key in keys if key in data}
+if __name__ == '__main__':
+    main()

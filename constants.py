@@ -1,12 +1,12 @@
-MAX_RETRIES = 5
+API_BASE_URL = 'https://api.example.com'
 TIMEOUT = 30
-API_URL = "https://api.example.com/v1"
-STATUS_SUCCESS = "success"
-STATUS_FAILURE = "failure"
-DEFAULT_PAGE_SIZE = 20
-SUPPORTED_FORMATS = {"json", "xml", "csv"}
-ERROR_MESSAGES = {
-    "not_found": "The requested resource was not found.",
-    "unauthorized": "Unauthorized access.",
-    "bad_request": "The request was invalid."
-}
+RETRY_COUNT = 3
+STATUS_SUCCESS = 'success'
+STATUS_FAILURE = 'failure'
+ERROR_INVALID_INPUT = 'Invalid input provided'
+ERROR_NOT_FOUND = 'Resource not found'
+ERROR_TIMEOUT = 'Operation timed out'
+DEFAULT_LANGUAGE = 'en'
+DEFAULT_PAGE_SIZE = 25
+SUPPORTED_LANGUAGES = ['en', 'es', 'fr', 'de', 'zh']
+FILE_EXTENSIONS = ['.txt', '.csv', '.json', '.xml']

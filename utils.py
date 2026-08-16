@@ -1,41 +1,19 @@
 import json
+from typing import Any, Dict
 
-class CustomError(Exception):
-    pass
+def load_json(file_path: str) -> Dict[str, Any]:
+    with open(file_path, 'r', encoding='utf-8') as file:
+        return json.load(file)
 
-def safe_load_json(file_path):
-    try:
-        with open(file_path, 'r') as file:
-            return json.load(file)
-    except FileNotFoundError:
-        raise CustomError(f'File not found: {file_path}')
-    except json.JSONDecodeError:
-        raise CustomError('Invalid JSON format')
-    except Exception as e:
-        raise CustomError(f'Unexpected error: {str(e)}')
 
-def divide_numbers(numerator, denominator):
-    try:
-        return numerator / denominator
-    except ZeroDivisionError:
-        raise CustomError('Cannot divide by zero')
-    except TypeError:
-        raise CustomError('Both numerator and denominator must be numbers')
-    except Exception as e:
-        raise CustomError(f'Unexpected error: {str(e)}')
+def save_json(data: Dict[str, Any], file_path: str) -> None:
+    with open(file_path, 'w', encoding='utf-8') as file:
+        json.dump(data, file, ensure_ascii=False, indent=4)
 
-def read_and_process_json(file_path):
-    data = safe_load_json(file_path)
-    return data
 
-def main():
-    file_path = 'data.json'
-    try:
-        data = read_and_process_json(file_path)
-        result = divide_numbers(data['value'], data['divisor'])
-        print(result)
-    except CustomError as e:
-        print(e)
+def merge_dicts(dict1: Dict[str, Any], dict2: Dict[str, Any]) -> Dict[str, Any]:
+    return {**dict1, **dict2}
 
-if __name__ == '__main__':
-    main()
+
+def filter_keys(data: Dict[str, Any], keys: set) -> Dict[str, Any]:
+    return {k: v for k, v in data.items() if k in keys}

@@ -1,22 +1,14 @@
-class DataError(Exception):
+import time
+
+class RetryException(Exception):
     pass
 
-class NotFoundError(DataError):
-    def __init__(self, message):
-        super().__init__(f'Not Found: {message}')
-
-class ValidationError(DataError):
-    def __init__(self, message):
-        super().__init__(f'Validation Error: {message}')
-
-class DatabaseError(DataError):
-    def __init__(self, message):
-        super().__init__(f'Database Error: {message}')
-
-class NetworkError(DataError):
-    def __init__(self, message):
-        super().__init__(f'Network Error: {message}')
-
-class TimeoutError(DataError):
-    def __init__(self, message):
-        super().__init__(f'Timeout Error: {message}')
+def retry_request(func, max_attempts=3, delay=2):
+    for attempt in range(max_attempts):
+        try:
+            return func()
+        except Exception as e:
+            if attempt < max_attempts - 1:
+                time.sleep(delay)
+            else:
+                raise RetryException('Max retries exceeded') from e

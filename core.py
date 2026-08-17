@@ -1,25 +1,21 @@
 import time
-import requests
+from functools import lru_cache
 
-class NetworkError(Exception):
-    pass
+@lru_cache(maxsize=1024)
+def expensive_computation(x):
+    time.sleep(2)  # Simulating a long computation
+    return x * x
 
-def retry_on_failure(retries=3, delay=2):
-    def decorator(func):
-        def wrapper(*args, **kwargs):
-            for attempt in range(retries):
-                try:
-                    return func(*args, **kwargs)
-                except requests.RequestException:
-                    if attempt < retries - 1:
-                        time.sleep(delay)
-                    else:
-                        raise NetworkError('Max retries exceeded')
-        return wrapper
-    return decorator
+class DataProcessor:
+    def __init__(self, data):
+        self.data = data
 
-@retry_on_failure(retries=5, delay=3)
-def fetch_data(url):
-    response = requests.get(url)
-    response.raise_for_status()
-    return response.json()
+    def process(self):
+        results = []
+        for item in self.data:
+            results.append(expensive_computation(item))
+        return results
+
+if __name__ == '__main__':
+    processor = DataProcessor(range(10))
+    print(processor.process())

@@ -1,14 +1,24 @@
-import time
+class CustomError(Exception):
+    def __init__(self, message, code=None):
+        super().__init__(message)
+        self.code = code
 
-class RetryException(Exception):
-    pass
+class NotFoundError(CustomError):
+    def __init__(self, resource):
+        super().__init__(f'{resource} not found', code=404)
 
-def retry_request(func, max_attempts=3, delay=2):
-    for attempt in range(max_attempts):
-        try:
-            return func()
-        except Exception as e:
-            if attempt < max_attempts - 1:
-                time.sleep(delay)
-            else:
-                raise RetryException('Max retries exceeded') from e
+class ValidationError(CustomError):
+    def __init__(self, field, message):
+        super().__init__(f'Validation error on {field}: {message}', code=400)
+
+class AuthenticationError(CustomError):
+    def __init__(self):
+        super().__init__('Authentication failed', code=401)
+
+class PermissionError(CustomError):
+    def __init__(self):
+        super().__init__('Permission denied', code=403)
+
+class DatabaseError(CustomError):
+    def __init__(self, operation):
+        super().__init__(f'Database operation failed: {operation}', code=500)
